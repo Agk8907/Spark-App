@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNotifications } from '../context/NotificationsContext';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 
@@ -26,6 +26,7 @@ const NotificationsScreen = ({ navigation }) => {
     markAsRead, 
     markAllAsRead 
   } = useNotifications();
+  const { theme } = useTheme();
 
   const handleNotificationPress = (notification) => {
     if (!notification.read) {
@@ -81,9 +82,9 @@ const NotificationsScreen = ({ navigation }) => {
       case 'reply':
         return '#4D79FF'; // Blue
       case 'follow':
-        return colors.primary.main;
+        return theme.primary.main;
       default:
-        return colors.text.light.secondary;
+        return theme.text.secondary;
     }
   };
 
@@ -105,7 +106,7 @@ const NotificationsScreen = ({ navigation }) => {
 
   const renderNotification = ({ item }) => (
     <TouchableOpacity
-      style={[styles.notificationItem, !item.read && styles.unread]}
+      style={[styles.notificationItem, { backgroundColor: theme.background.card }, !item.read && { backgroundColor: theme.background.secondary }]}
       onPress={() => handleNotificationPress(item)}
       activeOpacity={0.7}
     >
@@ -126,20 +127,20 @@ const NotificationsScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.notificationContent}>
-        <Text style={styles.notificationText}>
+        <Text style={[styles.notificationText, { color: theme.text.primary }]}>
           {getNotificationText(item)}
         </Text>
-        <Text style={styles.timeText}>{getTimeAgo(item.timestamp)}</Text>
+        <Text style={[styles.timeText, { color: theme.text.secondary }]}>{getTimeAgo(item.timestamp)}</Text>
       </View>
 
-      {!item.read && <View style={styles.unreadDot} />}
+      {!item.read && <View style={[styles.unreadDot, { backgroundColor: theme.primary.main }]} />}
     </TouchableOpacity>
   );
 
   const renderHeader = () => (
     <View style={styles.header}>
       <LinearGradient
-        colors={colors.primary.gradient}
+        colors={theme.primary.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.headerGradient}
@@ -169,15 +170,15 @@ const NotificationsScreen = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.main} />
-          <Text style={styles.loadingText}>Loading notifications...</Text>
+          <ActivityIndicator size="large" color={theme.primary.main} />
+          <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Loading notifications...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id.toString()}
@@ -188,10 +189,10 @@ const NotificationsScreen = ({ navigation }) => {
             <Ionicons
               name="notifications-off-outline"
               size={64}
-              color={colors.text.light.secondary}
+              color={theme.text.secondary}
             />
-            <Text style={styles.emptyText}>No notifications yet</Text>
-            <Text style={styles.emptySubtext}>
+            <Text style={[styles.emptyText, { color: theme.text.primary }]}>No notifications yet</Text>
+            <Text style={[styles.emptySubtext, { color: theme.text.secondary }]}>
               You'll see notifications when someone interacts with your posts
             </Text>
           </View>
@@ -206,7 +207,6 @@ const NotificationsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   listContent: {
     paddingBottom: spacing.xl,
@@ -226,12 +226,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.sizes.xxxl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.inverse,
+    color: '#FFFFFF',
     marginBottom: spacing.xs,
   },
   headerSubtitle: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.inverse,
+    color: '#FFFFFF',
     opacity: 0.9,
   },
   markAllButton: {
@@ -249,13 +249,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    backgroundColor: '#fff',
     marginHorizontal: spacing.md,
     marginBottom: spacing.xs,
     borderRadius: borderRadius.md,
   },
   unread: {
-    backgroundColor: '#f0f0ff',
+    // Handled dynamically
   },
   notificationLeft: {
     position: 'relative',
@@ -283,18 +282,15 @@ const styles = StyleSheet.create({
   },
   notificationText: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
     marginBottom: spacing.xs,
   },
   timeText: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
   },
   unreadDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: colors.primary.main,
     marginLeft: spacing.sm,
   },
   loadingContainer: {
@@ -305,7 +301,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -315,12 +310,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginTop: spacing.md,
   },
   emptySubtext: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     marginTop: spacing.xs,
     textAlign: 'center',
   },

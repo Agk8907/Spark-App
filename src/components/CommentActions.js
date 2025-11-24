@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing } from '../theme/spacing';
 
@@ -13,38 +13,34 @@ const CommentActions = ({
   onDelete,
   canDelete,
   timestamp,
-  isReplied,
-  replyCount
 }) => {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
       <View style={styles.leftActions}>
-        <Text style={styles.timestamp}>{timestamp}</Text>
+        <Text style={[styles.timestamp, { color: theme.text.tertiary }]}>{timestamp}</Text>
         
-        {likesCount > 0 && (
-          <Text style={styles.likesCount}>
-            {likesCount} {likesCount === 1 ? 'like' : 'likes'}
+        <TouchableOpacity onPress={onLike} style={styles.actionButton}>
+          <Text style={[
+            styles.actionText, 
+            { color: isLiked ? theme.status.error : theme.text.secondary },
+            isLiked && styles.likedText
+          ]}>
+            {likesCount > 0 ? `${likesCount} ` : ''}Like
           </Text>
-        )}
-        
-        <TouchableOpacity onPress={onReply} style={styles.actionButton}>
-          <Text style={styles.actionText}>Reply</Text>
         </TouchableOpacity>
 
-        {canDelete && (
-          <TouchableOpacity onPress={onDelete} style={styles.actionButton}>
-             <Ionicons name="trash-outline" size={14} color={colors.text.light.tertiary} />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity onPress={onReply} style={styles.actionButton}>
+          <Text style={[styles.actionText, { color: theme.text.secondary }]}>Reply</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={onLike} style={styles.likeButton}>
-        <Ionicons 
-          name={isLiked ? "heart" : "heart-outline"} 
-          size={14} 
-          color={isLiked ? colors.status.error : colors.text.light.tertiary} 
-        />
-      </TouchableOpacity>
+      {canDelete && (
+        <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+          <Ionicons name="trash-outline" size={14} color={theme.text.tertiary} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -64,12 +60,7 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: typography.sizes.xs,
-    color: colors.text.light.tertiary,
-  },
-  likesCount: {
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
+    marginRight: spacing.md,
   },
   actionButton: {
     paddingVertical: 2,
@@ -77,9 +68,11 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
   },
-  likeButton: {
+  likedText: {
+    fontWeight: typography.weights.bold,
+  },
+  deleteButton: {
     padding: 4,
   },
 });

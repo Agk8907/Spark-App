@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import UserAvatar from './UserAvatar';
 import CommentActions from './CommentActions';
 import { commentAPI } from '../services/api';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing } from '../theme/spacing';
 
@@ -13,6 +13,7 @@ const ReplyItem = ({
   onDelete, 
   onReply 
 }) => {
+  const { theme } = useTheme();
   const [isLiked, setIsLiked] = useState(reply.likes && reply.likes.includes(currentUserId));
   const [likesCount, setLikesCount] = useState(reply.likes ? reply.likes.length : 0);
   const canDelete = reply.user._id === currentUserId;
@@ -55,10 +56,10 @@ const ReplyItem = ({
       <UserAvatar uri={reply.user.avatar} size="xs" />
       <View style={styles.content}>
         <View style={styles.bubble}>
-          <Text style={styles.userName}>
+          <Text style={[styles.userName, { color: theme.text.primary }]}>
             {reply.user.username || reply.user.name}
           </Text>
-          <Text style={styles.commentText}>{reply.content}</Text>
+          <Text style={[styles.commentText, { color: theme.text.primary }]}>{reply.content}</Text>
         </View>
         
         <CommentActions
@@ -91,12 +92,10 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
     marginBottom: 2,
   },
   commentText: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.primary,
     lineHeight: typography.sizes.sm * typography.lineHeights.normal,
   },
 });

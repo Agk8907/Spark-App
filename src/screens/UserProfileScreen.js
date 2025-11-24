@@ -15,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { userAPI } from '../services/api';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 import { getImageUrl } from '../utils/image';
@@ -25,6 +25,7 @@ const { width } = Dimensions.get('window');
 const UserProfileScreen = ({ route, navigation }) => {
   const { userId } = route.params;
   const { user: currentUser } = useAuth();
+  const { theme } = useTheme();
   const [userProfile, setUserProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,8 +85,8 @@ const UserProfileScreen = ({ route, navigation }) => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.main} />
-          <Text style={styles.loadingText}>Loading profile...</Text>
+          <ActivityIndicator size="large" color={theme.primary.main} />
+          <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Loading profile...</Text>
         </View>
       </SafeAreaView>
     );
@@ -95,8 +96,8 @@ const UserProfileScreen = ({ route, navigation }) => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Ionicons name="person-outline" size={64} color={colors.text.light.secondary} />
-          <Text style={styles.errorText}>User not found</Text>
+          <Ionicons name="person-outline" size={64} color={theme.text.secondary} />
+          <Text style={[styles.errorText, { color: theme.text.secondary }]}>User not found</Text>
         </View>
       </SafeAreaView>
     );
@@ -107,7 +108,7 @@ const UserProfileScreen = ({ route, navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header with Gradient */}
         <LinearGradient
-          colors={colors.primary.gradient}
+          colors={theme.primary.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
@@ -127,10 +128,10 @@ const UserProfileScreen = ({ route, navigation }) => {
         </LinearGradient>
 
         {/* Profile Info */}
-        <View style={styles.profileInfo}>
-          <Text style={styles.name}>{userProfile.name}</Text>
-          <Text style={styles.username}>@{userProfile.username}</Text>
-          {userProfile.bio && <Text style={styles.bio}>{userProfile.bio}</Text>}
+        <View style={[styles.profileInfo, { backgroundColor: theme.background.card }]}>
+          <Text style={[styles.name, { color: theme.text.primary }]}>{userProfile.name}</Text>
+          <Text style={[styles.username, { color: theme.text.secondary }]}>@{userProfile.username}</Text>
+          {userProfile.bio && <Text style={[styles.bio, { color: theme.text.primary }]}>{userProfile.bio}</Text>}
 
           {/* Follow Button */}
           <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
@@ -140,7 +141,7 @@ const UserProfileScreen = ({ route, navigation }) => {
               disabled={followLoading}
             >
               <LinearGradient
-                colors={isFollowing ? ['#E0E0E0', '#BDBDBD'] : colors.primary.gradient}
+                colors={isFollowing ? ['#E0E0E0', '#BDBDBD'] : theme.primary.gradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.followButtonGradient}
@@ -164,29 +165,29 @@ const UserProfileScreen = ({ route, navigation }) => {
           </Animated.View>
 
           {/* Stats */}
-          <View style={styles.stats}>
+          <View style={[styles.stats, { borderTopColor: theme.background.tertiary }]}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userProfile.postsCount || 0}</Text>
-              <Text style={styles.statLabel}>Posts</Text>
+              <Text style={[styles.statNumber, { color: theme.text.primary }]}>{userProfile.postsCount || 0}</Text>
+              <Text style={[styles.statLabel, { color: theme.text.secondary }]}>Posts</Text>
             </View>
-            <View style={styles.statDivider} />
+            <View style={[styles.statDivider, { backgroundColor: theme.background.tertiary }]} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userProfile.followersCount || 0}</Text>
-              <Text style={styles.statLabel}>Followers</Text>
+              <Text style={[styles.statNumber, { color: theme.text.primary }]}>{userProfile.followersCount || 0}</Text>
+              <Text style={[styles.statLabel, { color: theme.text.secondary }]}>Followers</Text>
             </View>
-            <View style={styles.statDivider} />
+            <View style={[styles.statDivider, { backgroundColor: theme.background.tertiary }]} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userProfile.followingCount || 0}</Text>
-              <Text style={styles.statLabel}>Following</Text>
+              <Text style={[styles.statNumber, { color: theme.text.primary }]}>{userProfile.followingCount || 0}</Text>
+              <Text style={[styles.statLabel, { color: theme.text.secondary }]}>Following</Text>
             </View>
           </View>
         </View>
 
         {/* Posts Grid */}
-        <View style={styles.postsSection}>
+        <View style={[styles.postsSection, { backgroundColor: theme.background.card }]}>
           <View style={styles.postsSectionHeader}>
-            <Ionicons name="grid-outline" size={20} color={colors.primary.main} />
-            <Text style={styles.postsSectionTitle}>Posts</Text>
+            <Ionicons name="grid-outline" size={20} color={theme.primary.main} />
+            <Text style={[styles.postsSectionTitle, { color: theme.text.primary }]}>Posts</Text>
           </View>
 
           {userPosts.length > 0 ? (
@@ -204,8 +205,8 @@ const UserProfileScreen = ({ route, navigation }) => {
                       style={styles.gridImage}
                     />
                   ) : (
-                    <View style={styles.textPostPreview}>
-                      <Text style={styles.textPostContent} numberOfLines={3}>
+                    <View style={[styles.textPostPreview, { backgroundColor: theme.background.secondary }]}>
+                      <Text style={[styles.textPostContent, { color: theme.text.primary }]} numberOfLines={3}>
                         {post.content}
                       </Text>
                     </View>
@@ -215,8 +216,8 @@ const UserProfileScreen = ({ route, navigation }) => {
             </View>
           ) : (
             <View style={styles.noPostsContainer}>
-              <Ionicons name="images-outline" size={64} color={colors.text.light.secondary} />
-              <Text style={styles.noPostsText}>No posts yet</Text>
+              <Ionicons name="images-outline" size={64} color={theme.text.secondary} />
+              <Text style={[styles.noPostsText, { color: theme.text.secondary }]}>No posts yet</Text>
             </View>
           )}
         </View>
@@ -228,7 +229,6 @@ const UserProfileScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   errorContainer: {
     flex: 1,
@@ -248,7 +247,6 @@ const styles = StyleSheet.create({
   errorText: {
     marginTop: spacing.md,
     fontSize: typography.sizes.lg,
-    color: colors.text.light.secondary,
   },
   header: {
     paddingTop: spacing.xl,
@@ -272,7 +270,6 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   profileInfo: {
-    backgroundColor: '#fff',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xl,
@@ -283,19 +280,16 @@ const styles = StyleSheet.create({
   name: {
     fontSize: typography.sizes.xxl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
     marginBottom: spacing.xs,
     textAlign: 'center',
   },
   username: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     marginBottom: spacing.md,
     textAlign: 'center',
   },
   bio: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
     lineHeight: 22,
     marginBottom: spacing.lg,
     textAlign: 'center',
@@ -322,7 +316,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: colors.background.light.tertiary,
   },
   statItem: {
     alignItems: 'center',
@@ -330,19 +323,15 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
   },
   statLabel: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
     marginTop: spacing.xs,
   },
   statDivider: {
     width: 1,
-    backgroundColor: colors.background.light.tertiary,
   },
   postsSection: {
-    backgroundColor: '#fff',
     marginTop: spacing.md,
     padding: spacing.lg,
   },
@@ -355,7 +344,6 @@ const styles = StyleSheet.create({
   postsSectionTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
   },
   postsGrid: {
     flexDirection: 'row',
@@ -376,13 +364,11 @@ const styles = StyleSheet.create({
   textPostPreview: {
     width: '100%',
     height: '100%',
-    backgroundColor: colors.background.light.secondary,
     padding: spacing.sm,
     justifyContent: 'center',
   },
   textPostContent: {
     fontSize: typography.sizes.xs,
-    color: colors.text.light.primary,
   },
   noPostsContainer: {
     alignItems: 'center',
@@ -391,7 +377,6 @@ const styles = StyleSheet.create({
   noPostsText: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
     marginTop: spacing.md,
     textAlign: 'center',
   },

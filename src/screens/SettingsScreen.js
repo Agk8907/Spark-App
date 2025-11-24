@@ -20,13 +20,16 @@ import { useAuth } from '../context/AuthContext';
 import { usePosts } from '../context/PostsContext';
 import { userAPI } from '../services/api';
 import { getImageUrl } from '../utils/image';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
+import AppearanceSettings from '../components/AppearanceSettings';
+import ThemeToggle from '../components/ThemeToggle';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 
 const SettingsScreen = ({ navigation }) => {
   const { user, logout, updateUser } = useAuth();
   const { updateUserInPosts } = usePosts();
+  const { theme } = useTheme();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -94,28 +97,31 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <ScrollView>
         {/* Header */}
         <LinearGradient
-          colors={colors.primary.gradient}
+          colors={theme.primary.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
         >
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => {
-              if (navigation.canGoBack()) {
-                navigation.goBack();
-              } else {
-                navigation.navigate('MainTabs', { screen: 'Profile' });
-              }
-            }}
-          >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Settings & Profile</Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity 
+              style={styles.backButton} 
+              onPress={() => {
+                if (navigation.canGoBack()) {
+                  navigation.goBack();
+                } else {
+                  navigation.navigate('MainTabs', { screen: 'Profile' });
+                }
+              }}
+            >
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Settings & Profile</Text>
+          </View>
+          <ThemeToggle />
         </LinearGradient>
 
         {/* Avatar Section */}
@@ -128,7 +134,7 @@ const SettingsScreen = ({ navigation }) => {
             {editing && (
               <TouchableOpacity style={styles.editAvatarButton} onPress={pickImage}>
                 <LinearGradient
-                  colors={colors.primary.gradient}
+                  colors={theme.primary.gradient}
                   style={styles.editAvatarGradient}
                 >
                   <Ionicons name="camera" size={20} color="#fff" />
@@ -143,7 +149,7 @@ const SettingsScreen = ({ navigation }) => {
               onPress={() => setEditing(true)}
             >
               <LinearGradient
-                colors={colors.primary.gradient}
+                colors={theme.primary.gradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.editButtonGradient}
@@ -158,51 +164,64 @@ const SettingsScreen = ({ navigation }) => {
         {/* Profile Form */}
         <View style={styles.form}>
           <View style={styles.field}>
-            <Text style={styles.label}>Name</Text>
+            <Text style={[styles.label, { color: theme.text.secondary }]}>Name</Text>
             <TextInput
-              style={[styles.input, !editing && styles.inputDisabled]}
+              style={[
+                styles.input, 
+                { color: theme.text.primary, backgroundColor: theme.background.secondary },
+                !editing && styles.inputDisabled
+              ]}
               value={formData.name}
               onChangeText={(value) => updateFormData('name', value)}
               editable={editing}
               placeholder="Your name"
-              placeholderTextColor={colors.text.light.secondary}
+              placeholderTextColor={theme.text.tertiary}
             />
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Username</Text>
+            <Text style={[styles.label, { color: theme.text.secondary }]}>Username</Text>
             <TextInput
-              style={[styles.input, !editing && styles.inputDisabled]}
+              style={[
+                styles.input, 
+                { color: theme.text.primary, backgroundColor: theme.background.secondary },
+                !editing && styles.inputDisabled
+              ]}
               value={formData.username}
               onChangeText={(value) => updateFormData('username', value)}
               editable={editing}
               placeholder="Your username"
-              placeholderTextColor={colors.text.light.secondary}
+              placeholderTextColor={theme.text.tertiary}
               autoCapitalize="none"
             />
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Bio</Text>
+            <Text style={[styles.label, { color: theme.text.secondary }]}>Bio</Text>
             <TextInput
-              style={[styles.input, styles.bioInput, !editing && styles.inputDisabled]}
+              style={[
+                styles.input, 
+                styles.bioInput, 
+                { color: theme.text.primary, backgroundColor: theme.background.secondary },
+                !editing && styles.inputDisabled
+              ]}
               value={formData.bio}
               onChangeText={(value) => updateFormData('bio', value)}
               editable={editing}
               placeholder="Tell us about yourself"
-              placeholderTextColor={colors.text.light.secondary}
+              placeholderTextColor={theme.text.tertiary}
               multiline
               maxLength={200}
             />
             {editing && (
-              <Text style={styles.characterCount}>{formData.bio?.length || 0}/200</Text>
+              <Text style={[styles.characterCount, { color: theme.text.secondary }]}>{formData.bio?.length || 0}/200</Text>
             )}
           </View>
 
           {editing && (
             <View style={styles.actionButtons}>
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={[styles.cancelButton, { borderColor: theme.text.secondary }]}
                 onPress={() => {
                   setEditing(false);
                   setNewAvatar(null);
@@ -213,7 +232,7 @@ const SettingsScreen = ({ navigation }) => {
                   });
                 }}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={[styles.cancelButtonText, { color: theme.text.secondary }]}>Cancel</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -222,7 +241,7 @@ const SettingsScreen = ({ navigation }) => {
                 disabled={loading}
               >
                 <LinearGradient
-                  colors={colors.primary.gradient}
+                  colors={theme.primary.gradient}
                   style={styles.saveButtonGradient}
                 >
                   {loading ? (
@@ -236,11 +255,16 @@ const SettingsScreen = ({ navigation }) => {
           )}
         </View>
 
-        {/* Account Section */}
-        <View style={styles.accountSection}>
-          <Text style={styles.sectionTitle}>Account</Text>
+        {/* Appearance Settings */}
+        <View style={[styles.section, { backgroundColor: theme.background.card }]}>
+          <AppearanceSettings />
+        </View>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        {/* Account Section */}
+        <View style={[styles.accountSection, { backgroundColor: theme.background.card }]}>
+          <Text style={[styles.sectionTitle, { color: theme.text.secondary }]}>Account</Text>
+
+          <TouchableOpacity style={[styles.logoutButton, { backgroundColor: theme.status.error }]} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={24} color="#fff" />
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
@@ -257,17 +281,17 @@ const SettingsScreen = ({ navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalIconContainer}>
-              <Ionicons name="log-out" size={32} color={colors.status.error} />
+              <Ionicons name="log-out" size={32} color={theme.status.error} />
             </View>
-            <Text style={styles.modalTitle}>Logout</Text>
-            <Text style={styles.modalMessage}>Are you sure you want to log out of your account?</Text>
+            <Text style={[styles.modalTitle, { color: theme.text.primary }]}>Logout</Text>
+            <Text style={[styles.modalMessage, { color: theme.text.secondary }]}>Are you sure you want to log out of your account?</Text>
             
             <View style={styles.modalButtons}>
               <TouchableOpacity 
-                style={styles.modalCancelButton}
+                style={[styles.modalCancelButton, { borderColor: theme.background.tertiary, backgroundColor: theme.background.card }]}
                 onPress={() => setLogoutModalVisible(false)}
               >
-                <Text style={styles.modalCancelText}>Cancel</Text>
+                <Text style={[styles.modalCancelText, { color: theme.text.primary }]}>Cancel</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
@@ -278,7 +302,7 @@ const SettingsScreen = ({ navigation }) => {
                 }}
               >
                 <LinearGradient
-                  colors={colors.social.likeGradient}
+                  colors={theme.primary.gradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.modalLogoutGradient}
@@ -298,7 +322,6 @@ const styles = StyleSheet.create({
   // ... existing styles ...
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   // ... (keeping all existing styles, just appending new ones)
   
@@ -344,12 +367,10 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
     marginBottom: spacing.xs,
   },
   modalMessage: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     textAlign: 'center',
     marginBottom: spacing.xl,
     lineHeight: 22,
@@ -364,14 +385,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: colors.background.light.tertiary,
     alignItems: 'center',
     backgroundColor: '#fff',
   },
   modalCancelText: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
   },
   modalLogoutButton: {
     flex: 1,
@@ -406,7 +425,6 @@ const styles = StyleSheet.create({
   avatarSection: {
     alignItems: 'center',
     paddingVertical: spacing.xl,
-    backgroundColor: '#fff',
     marginBottom: spacing.md,
   },
   avatarContainer: {
@@ -450,7 +468,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.semibold,
   },
   form: {
-    backgroundColor: '#fff',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.lg,
     marginBottom: spacing.md,
@@ -461,14 +478,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
     marginBottom: spacing.xs,
     textTransform: 'uppercase',
   },
   input: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
-    backgroundColor: colors.background.light.secondary,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md,
@@ -482,7 +496,6 @@ const styles = StyleSheet.create({
   },
   characterCount: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
     textAlign: 'right',
     marginTop: spacing.xs,
   },
@@ -496,13 +509,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: colors.text.light.secondary,
     alignItems: 'center',
   },
   cancelButtonText: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
   },
   saveButton: {
     flex: 1,
@@ -519,14 +530,16 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.semibold,
   },
   accountSection: {
-    backgroundColor: '#fff',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.lg,
+  },
+  section: {
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.sm,
   },
   sectionTitle: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
     marginBottom: spacing.md,
     textTransform: 'uppercase',
   },
@@ -535,7 +548,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing.md,
-    backgroundColor: colors.status.error,
     borderRadius: borderRadius.md,
     marginTop: spacing.sm,
     gap: spacing.sm,

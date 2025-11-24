@@ -14,11 +14,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { userAPI } from '../services/api';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 const SearchScreen = ({ navigation }) => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -115,16 +116,16 @@ const SearchScreen = ({ navigation }) => {
     
     return (
       <TouchableOpacity
-        style={styles.userItem}
+        style={[styles.userItem, { backgroundColor: theme.background.card }]}
         onPress={() => handleUserPress(item.id)}
         activeOpacity={0.7}
       >
         <Image source={{ uri: item.avatar }} style={styles.avatar} />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.name}</Text>
-          <Text style={styles.userUsername}>@{item.username}</Text>
+          <Text style={[styles.userName, { color: theme.text.primary }]}>{item.name}</Text>
+          <Text style={[styles.userUsername, { color: theme.text.secondary }]}>@{item.username}</Text>
           {item.bio ? (
-            <Text style={styles.userBio} numberOfLines={1}>
+            <Text style={[styles.userBio, { color: theme.text.primary }]} numberOfLines={1}>
               {item.bio}
             </Text>
           ) : null}
@@ -141,12 +142,12 @@ const SearchScreen = ({ navigation }) => {
             disabled={isLoading}
           >
             {isLoading ? (
-              <ActivityIndicator size="small" color={isFollowing ? colors.text.light.primary : '#fff'} />
+              <ActivityIndicator size="small" color={isFollowing ? theme.text.primary : '#fff'} />
             ) : (
               <Text
                 style={[
                   styles.followButtonTextSmall,
-                  isFollowing && styles.followingButtonTextSmall,
+                  isFollowing && { color: theme.text.secondary },
                 ]}
               >
                 {isFollowing ? 'Following' : 'Follow'}
@@ -169,8 +170,8 @@ const SearchScreen = ({ navigation }) => {
     ];
 
     return (
-      <View style={styles.trendingSection}>
-        <Text style={styles.sectionTitle}>Trending Topics</Text>
+      <View style={[styles.trendingSection, { backgroundColor: theme.background.card }]}>
+        <Text style={[styles.sectionTitle, { color: theme.text.primary }]}>Trending Topics</Text>
         {topics.map((topic) => (
           <TouchableOpacity
             key={topic.id}
@@ -178,13 +179,13 @@ const SearchScreen = ({ navigation }) => {
             onPress={() => handleSearch(topic.name)}
           >
             <View>
-              <Text style={styles.topicName}>{topic.name}</Text>
-              <Text style={styles.topicCount}>{topic.count}</Text>
+              <Text style={[styles.topicName, { color: theme.primary.main }]}>{topic.name}</Text>
+              <Text style={[styles.topicCount, { color: theme.text.secondary }]}>{topic.count}</Text>
             </View>
             <Ionicons
               name="trending-up"
               size={20}
-              color={colors.accent.green.main}
+              color="#4CAF50"
             />
           </TouchableOpacity>
         ))}
@@ -193,10 +194,10 @@ const SearchScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       {/* Header */}
       <LinearGradient
-        colors={colors.primary.gradient}
+        colors={theme.primary.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.header}
@@ -206,18 +207,18 @@ const SearchScreen = ({ navigation }) => {
       </LinearGradient>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
+      <View style={[styles.searchContainer, { backgroundColor: theme.background.card }]}>
+        <View style={[styles.searchBar, { backgroundColor: theme.background.secondary }]}>
           <Ionicons
             name="search"
             size={20}
-            color={colors.text.light.secondary}
+            color={theme.text.secondary}
             style={styles.searchIcon}
           />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: theme.text.primary }]}
             placeholder="Search users..."
-            placeholderTextColor={colors.text.light.secondary}
+            placeholderTextColor={theme.text.secondary}
             value={query}
             onChangeText={handleSearch}
             autoCapitalize="none"
@@ -228,7 +229,7 @@ const SearchScreen = ({ navigation }) => {
               <Ionicons
                 name="close-circle"
                 size={20}
-                color={colors.text.light.secondary}
+                color={theme.text.secondary}
               />
             </TouchableOpacity>
           )}
@@ -238,8 +239,8 @@ const SearchScreen = ({ navigation }) => {
       {/* Content */}
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.main} />
-          <Text style={styles.loadingText}>Searching...</Text>
+          <ActivityIndicator size="large" color={theme.primary.main} />
+          <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Searching...</Text>
         </View>
       ) : searched && query.length > 0 ? (
         <FlatList
@@ -251,10 +252,10 @@ const SearchScreen = ({ navigation }) => {
               <Ionicons
                 name="search-outline"
                 size={64}
-                color={colors.text.light.secondary}
+                color={theme.text.secondary}
               />
-              <Text style={styles.emptyText}>No users found</Text>
-              <Text style={styles.emptySubtext}>
+              <Text style={[styles.emptyText, { color: theme.text.primary }]}>No users found</Text>
+              <Text style={[styles.emptySubtext, { color: theme.text.secondary }]}>
                 Try searching with a different keyword
               </Text>
             </View>
@@ -276,7 +277,6 @@ const SearchScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   header: {
     padding: spacing.lg,
@@ -285,23 +285,21 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.sizes.xxxl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.inverse,
+    color: '#FFFFFF',
     marginBottom: spacing.xs,
   },
   headerSubtitle: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.inverse,
+    color: '#FFFFFF',
     opacity: 0.9,
   },
   searchContainer: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
-    backgroundColor: '#fff',
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.light.secondary,
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.md,
   },
@@ -312,7 +310,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: spacing.sm,
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
   },
   listContent: {
     paddingBottom: spacing.xl,
@@ -321,7 +318,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    backgroundColor: '#fff',
     marginHorizontal: spacing.md,
     marginBottom: spacing.xs,
     borderRadius: borderRadius.md,
@@ -338,28 +334,24 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginBottom: spacing.xs / 2,
   },
   userUsername: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
     marginBottom: spacing.xs / 2,
   },
   userBio: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.primary,
   },
   onlineDot: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: colors.accent.green.main,
+    backgroundColor: '#4CAF50',
     borderWidth: 2,
     borderColor: '#fff',
   },
   trendingSection: {
-    backgroundColor: '#fff',
     margin: spacing.md,
     padding: spacing.md,
     borderRadius: borderRadius.lg,
@@ -367,7 +359,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginBottom: spacing.md,
   },
   topicItem: {
@@ -376,17 +367,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.background.light.tertiary,
+    borderBottomColor: 'transparent', // Handled dynamically
   },
   topicName: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.semibold,
-    color: colors.primary.main,
     marginBottom: spacing.xs / 2,
   },
   topicCount: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -396,7 +385,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -406,26 +394,22 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginTop: spacing.md,
   },
   emptySubtext: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     marginTop: spacing.xs,
     textAlign: 'center',
   },
   followButtonSmall: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    backgroundColor: colors.primary.main,
     borderRadius: borderRadius.md,
     marginLeft: spacing.sm,
   },
   followingButtonSmall: {
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: colors.background.light.tertiary,
+    borderColor: 'transparent', // Handled dynamically
   },
   followButtonSmallText: {
     fontSize: typography.sizes.sm,
@@ -433,7 +417,6 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   followingButtonSmallText: {
-    color: colors.text.light.secondary,
   },
 });
 

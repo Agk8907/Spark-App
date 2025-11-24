@@ -17,12 +17,14 @@ import PostCard from '../components/PostCard';
 import CommentsModal from '../components/CommentsModal';
 import { usePosts } from '../context/PostsContext';
 import { useAuth } from '../context/AuthContext';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 
 const FeedScreen = ({ navigation }) => {
   const { posts, loading, fetchPosts, likePost, deletePost } = usePosts();
+  const { theme, isDark, setThemeMode } = useTheme();
   const { user } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -81,11 +83,10 @@ const FeedScreen = ({ navigation }) => {
     if (filter === 'text') return posts.filter(p => p.type === 'text');
     return posts;
   };
-
   const renderHeader = () => (
     <View style={styles.header}>
       <LinearGradient
-        colors={colors.primary.gradient}
+        colors={theme.primary.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.headerGradient}
@@ -95,12 +96,15 @@ const FeedScreen = ({ navigation }) => {
             <Text style={styles.headerTitle}>Spark</Text>
             <Text style={styles.headerSubtitle}>Crafted by Akki Gopi</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('CreatePost')}
-            style={styles.createButton}
-          >
-            <Ionicons name="add-circle" size={36} color="#fff" />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <ThemeToggle style={{ marginRight: 12 }} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('CreatePost')}
+              style={styles.createButton}
+            >
+              <Ionicons name="add-circle" size={36} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </LinearGradient>
 
@@ -112,12 +116,12 @@ const FeedScreen = ({ navigation }) => {
             onPress={() => setFilter(f.key)}
             style={[
               styles.filterPill,
-              filter === f.key && styles.filterPillActive,
+              { backgroundColor: filter === f.key ? theme.primary.main : theme.background.tertiary },
             ]}
           >
             <Text style={[
               styles.filterText,
-              filter === f.key && styles.filterTextActive,
+              { color: filter === f.key ? '#fff' : theme.text.secondary },
             ]}>
               {f.label}
             </Text>
@@ -129,8 +133,8 @@ const FeedScreen = ({ navigation }) => {
 
   const renderFooter = () => (
     <View style={styles.footer}>
-      <Text style={styles.footerText}>✨ You're all caught up!</Text>
-      <Text style={styles.footerSubtext}>
+      <Text style={[styles.footerText, { color: theme.text.primary }]}>✨ You're all caught up!</Text>
+      <Text style={[styles.footerSubtext, { color: theme.text.secondary }]}>
         Take a break and come back later
       </Text>
     </View>
@@ -138,18 +142,18 @@ const FeedScreen = ({ navigation }) => {
 
   if (loading && posts.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.main} />
-          <Text style={styles.loadingText}>Loading feed...</Text>
+          <ActivityIndicator size="large" color={theme.primary.main} />
+          <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Loading feed...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <FlatList
         data={getFilteredPosts()}
         keyExtractor={(item) => (item.id || item._id)?.toString() || String(Math.random())}
@@ -166,15 +170,15 @@ const FeedScreen = ({ navigation }) => {
         ListFooterComponent={posts.length > 0 ? renderFooter : null}
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
-            <Ionicons name="document-text-outline" size={64} color={colors.text.light.secondary} />
-            <Text style={styles.emptyText}>No posts yet</Text>
-            <Text style={styles.emptySubtext}>Be the first to create a post!</Text>
+            <Ionicons name="document-text-outline" size={64} color={theme.text.tertiary} />
+            <Text style={[styles.emptyText, { color: theme.text.primary }]}>No posts yet</Text>
+            <Text style={[styles.emptySubtext, { color: theme.text.secondary }]}>Be the first to create a post!</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('CreatePost')}
               style={styles.emptyButton}
             >
               <LinearGradient
-                colors={colors.primary.gradient}
+                colors={theme.primary.gradient}
                 style={styles.emptyButtonGradient}
               >
                 <Text style={styles.emptyButtonText}>Create Post</Text>
@@ -186,7 +190,7 @@ const FeedScreen = ({ navigation }) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary.main}
+            tintColor={theme.primary.main}
           />
         }
         contentContainerStyle={styles.listContent}
@@ -200,7 +204,7 @@ const FeedScreen = ({ navigation }) => {
         activeOpacity={0.8}
       >
         <LinearGradient
-          colors={colors.primary.gradient}
+          colors={theme.primary.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.fabGradient}
@@ -225,7 +229,6 @@ const FeedScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   listContent: {
     paddingBottom: spacing.xl,
@@ -245,12 +248,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.sizes.xxxl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.inverse,
+    color: '#fff',
     marginBottom: spacing.xs,
   },
   headerSubtitle: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.inverse,
+    color: '#fff',
     opacity: 0.9,
   },
   createButton: {
@@ -266,18 +269,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: 20,
-    backgroundColor: colors.background.light.tertiary,
-  },
-  filterPillActive: {
-    backgroundColor: colors.primary.main,
   },
   filterText: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
-    color: colors.text.light.secondary,
-  },
-  filterTextActive: {
-    color: colors.text.light.inverse,
   },
   footer: {
     alignItems: 'center',
@@ -286,12 +281,10 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginBottom: spacing.xs,
   },
   footerSubtext: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -301,7 +294,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -311,12 +303,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginTop: spacing.md,
   },
   emptySubtext: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     marginTop: spacing.xs,
   },
   emptyButton: {

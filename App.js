@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from './src/context/AuthContext';
 import { PostsProvider } from './src/context/PostsContext';
 import { NotificationsProvider } from './src/context/NotificationsContext';
+import { ThemeProvider } from './src/context/ThemeContext';
 import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
@@ -10,8 +11,10 @@ export default function App() {
     <AuthProvider>
       <PostsProvider>
         <NotificationsProvider>
-          <StatusBar style="dark" />
-          <AppNavigator />
+          <ThemeProvider>
+            <StatusBar style="auto" />
+            <AppNavigator />
+          </ThemeProvider>
         </NotificationsProvider>
       </PostsProvider>
     </AuthProvider>

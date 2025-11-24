@@ -4,11 +4,12 @@ import UserAvatar from './UserAvatar';
 import CommentActions from './CommentActions';
 import ReplyItem from './ReplyItem';
 import { commentAPI } from '../services/api';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing } from '../theme/spacing';
 
 const CommentItem = ({ comment, currentUserId, onReply, onDelete }) => {
+  const { theme } = useTheme();
   const [isLiked, setIsLiked] = useState(comment.likes && comment.likes.includes(currentUserId));
   const [likesCount, setLikesCount] = useState(comment.likes ? comment.likes.length : 0);
   const [replies, setReplies] = useState([]);
@@ -80,7 +81,7 @@ const CommentItem = ({ comment, currentUserId, onReply, onDelete }) => {
         <UserAvatar uri={comment.user.avatar} size="small" />
         <View style={styles.content}>
           <View style={styles.bubble}>
-            <Text style={styles.userName}>
+            <Text style={[styles.userName, { color: theme.text.primary }]}>
               {comment.user.username || comment.user.name}
             </Text>
             <Text style={styles.commentText}>{comment.content}</Text>
@@ -109,7 +110,7 @@ const CommentItem = ({ comment, currentUserId, onReply, onDelete }) => {
           </TouchableOpacity>
 
           {loadingReplies && (
-            <ActivityIndicator size="small" color={colors.text.light.tertiary} style={styles.loader} />
+            <ActivityIndicator size="small" color={theme.text.tertiary} style={styles.loader} />
           )}
 
           {showReplies && (
@@ -149,12 +150,9 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
-    marginBottom: 2,
   },
   commentText: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.primary,
     lineHeight: typography.sizes.sm * typography.lineHeights.normal,
   },
   repliesContainer: {
@@ -169,13 +167,11 @@ const styles = StyleSheet.create({
   horizontalLine: {
     width: 24,
     height: 1,
-    backgroundColor: colors.text.light.tertiary,
     marginRight: spacing.sm,
   },
   viewRepliesText: {
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
   },
   loader: {
     marginLeft: spacing.md,

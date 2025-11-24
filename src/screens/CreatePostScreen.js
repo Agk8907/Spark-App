@@ -16,7 +16,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { usePosts } from '../context/PostsContext';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 
@@ -24,6 +24,7 @@ const CreatePostScreen = ({ navigation }) => {
   const [content, setContent] = useState('');
   const [type, setType] = useState('text');
   const [image, setImage] = useState(null);
+  const { theme } = useTheme();
   
   // Safely get posts context
   let createPost, loading;
@@ -104,14 +105,14 @@ const CreatePostScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         {/* Header with Gradient */}
         <LinearGradient
-          colors={colors.primary.gradient}
+          colors={theme.primary.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.header}
@@ -141,11 +142,11 @@ const CreatePostScreen = ({ navigation }) => {
         {/* Content Area */}
         <View style={styles.content}>
           {/* Text Input with Card Style */}
-          <View style={styles.textInputCard}>
+          <View style={[styles.textInputCard, { backgroundColor: theme.background.card }]}>
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, { color: theme.text.primary }]}
               placeholder="What's on your mind?"
-              placeholderTextColor={colors.text.light.secondary}
+              placeholderTextColor={theme.text.secondary}
               value={content}
               onChangeText={setContent}
               multiline
@@ -154,7 +155,7 @@ const CreatePostScreen = ({ navigation }) => {
             />
             {/* Character Counter */}
             <View style={styles.characterCountContainer}>
-              <Text style={styles.characterCount}>
+              <Text style={[styles.characterCount, { color: theme.text.secondary }]}>
                 {content.length}/2000
               </Text>
             </View>
@@ -162,7 +163,7 @@ const CreatePostScreen = ({ navigation }) => {
 
           {/* Image Preview with Modern Card */}
           {image && (
-            <View style={styles.imagePreviewCard}>
+            <View style={[styles.imagePreviewCard, { backgroundColor: theme.background.card }]}>
               <Image 
                 source={{ uri: image }} 
                 style={styles.imagePreview} 
@@ -185,8 +186,8 @@ const CreatePostScreen = ({ navigation }) => {
         </View>
 
         {/* Toolbar with Elevated Card */}
-        <View style={styles.toolbarContainer}>
-          <View style={styles.toolbar}>
+        <View style={[styles.toolbarContainer, { backgroundColor: theme.background.secondary }]}>
+          <View style={[styles.toolbar, { backgroundColor: theme.background.card }]}>
             <TouchableOpacity style={styles.toolbarButton} onPress={pickImage}>
               <LinearGradient
                 colors={['#4FD1C5', '#38B2AC']}
@@ -208,7 +209,6 @@ const CreatePostScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   keyboardView: {
     flex: 1,
@@ -262,7 +262,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   textInputCard: {
-    backgroundColor: '#fff',
     borderRadius: borderRadius.xl,
     padding: spacing.lg,
     minHeight: 180,
@@ -283,7 +282,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontSize: typography.sizes.lg,
-    color: colors.text.light.primary,
     lineHeight: 26,
     minHeight: 120,
   },
@@ -293,12 +291,10 @@ const styles = StyleSheet.create({
   },
   characterCount: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
     fontWeight: typography.weights.medium,
   },
   imagePreviewCard: {
     marginTop: spacing.lg,
-    backgroundColor: '#fff',
     borderRadius: borderRadius.xl,
     overflow: 'hidden',
     ...Platform.select({
@@ -337,10 +333,8 @@ const styles = StyleSheet.create({
   },
   toolbarContainer: {
     padding: spacing.lg,
-    backgroundColor: colors.background.light.secondary,
   },
   toolbar: {
-    backgroundColor: '#fff',
     borderRadius: borderRadius.xl,
     padding: spacing.sm,
     ...Platform.select({

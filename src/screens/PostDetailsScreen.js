@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import PostCard from '../components/PostCard';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import { spacing } from '../theme/spacing';
 import { useAuth } from '../context/AuthContext';
 import { commentAPI, postAPI } from '../services/api';
@@ -14,6 +14,7 @@ const PostDetailsScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(!initialPost);
   const [showComments, setShowComments] = useState(false);
   const { user } = useAuth();
+  const { theme } = useTheme();
 
   // If we only have postId, we might need to fetch the post (not implemented in API yet, but good for future)
   // For now, we assume post object is passed or we display what we have
@@ -76,7 +77,7 @@ const PostDetailsScreen = ({ route, navigation }) => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.main} />
+          <ActivityIndicator size="large" color={theme.primary.main} />
         </View>
       </SafeAreaView>
     );
@@ -84,11 +85,11 @@ const PostDetailsScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.background.card, borderBottomColor: theme.background.tertiary }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.light.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Post</Text>
+        <Text style={[styles.headerTitle, { color: theme.text.primary }]}>Post</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -102,7 +103,7 @@ const PostDetailsScreen = ({ route, navigation }) => {
           />
         ) : (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Post not found</Text>
+            <Text style={[styles.errorText, { color: theme.text.secondary }]}>Post not found</Text>
           </View>
         )}
       </ScrollView>
@@ -120,7 +121,6 @@ const PostDetailsScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -128,14 +128,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
-    backgroundColor: '#fff',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.background.light.tertiary,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text.light.primary,
   },
   content: {
     paddingVertical: spacing.sm,
@@ -150,7 +149,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: colors.text.light.secondary,
     fontSize: 16,
   },
 });

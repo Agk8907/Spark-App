@@ -19,13 +19,14 @@ import { commentAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import CommentItem from './CommentItem';
 import UserAvatar from './UserAvatar';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 import EmojiPicker from './EmojiPicker';
 
 const CommentsModal = ({ visible, postId, onClose }) => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -147,13 +148,13 @@ const CommentsModal = ({ visible, postId, onClose }) => {
         <Animated.View 
           style={[
             styles.modalContainer,
-            { transform: [{ translateY }] }
+            { transform: [{ translateY }], backgroundColor: theme.background.card }
           ]}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerBar} />
-            <Text style={styles.headerTitle}>Comments</Text>
+          <View style={[styles.header, { borderBottomColor: theme.background.tertiary }]}>
+            <View style={[styles.headerBar, { backgroundColor: theme.background.tertiary }]} />
+            <Text style={[styles.headerTitle, { color: theme.text.primary }]}>Comments</Text>
             <View style={styles.headerRight} /> 
           </View>
 
@@ -165,7 +166,7 @@ const CommentsModal = ({ visible, postId, onClose }) => {
           >
             {loading ? (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={colors.primary.main} />
+                <ActivityIndicator size="large" color={theme.primary.main} />
               </View>
             ) : (
               <FlatList
@@ -181,9 +182,9 @@ const CommentsModal = ({ visible, postId, onClose }) => {
                 )}
                 ListEmptyComponent={() => (
                   <View style={styles.emptyContainer}>
-                    <Ionicons name="chatbubble-outline" size={64} color={colors.text.light.secondary} />
-                    <Text style={styles.emptyText}>No comments yet</Text>
-                    <Text style={styles.emptySubtext}>Start the conversation.</Text>
+                    <Ionicons name="chatbubble-outline" size={64} color={theme.text.secondary} />
+                    <Text style={[styles.emptyText, { color: theme.text.primary }]}>No comments yet</Text>
+                    <Text style={[styles.emptySubtext, { color: theme.text.secondary }]}>Start the conversation.</Text>
                   </View>
                 )}
                 contentContainerStyle={styles.listContent}
@@ -193,20 +194,20 @@ const CommentsModal = ({ visible, postId, onClose }) => {
 
             {/* Reply Indicator */}
             {replyingTo && (
-              <View style={styles.replyingContainer}>
-                <Text style={styles.replyingText}>
-                  Replying to <Text style={styles.replyingName}>
+              <View style={[styles.replyingContainer, { backgroundColor: theme.background.secondary, borderTopColor: theme.background.tertiary }]}>
+                <Text style={[styles.replyingText, { color: theme.text.secondary }]}>
+                  Replying to <Text style={[styles.replyingName, { color: theme.text.primary }]}>
                     {replyingTo.user.username || replyingTo.user.name}
                   </Text>
                 </Text>
                 <TouchableOpacity onPress={cancelReply}>
-                  <Ionicons name="close-circle" size={20} color={colors.text.light.secondary} />
+                  <Ionicons name="close-circle" size={20} color={theme.text.secondary} />
                 </TouchableOpacity>
               </View>
             )}
 
             {/* Input Section */}
-            <View style={styles.inputWrapper}>
+            <View style={[styles.inputWrapper, { backgroundColor: theme.background.card, borderTopColor: theme.background.tertiary }]}>
               <View style={styles.inputContainer}>
                 <TouchableOpacity 
                   onPress={() => {
@@ -218,33 +219,37 @@ const CommentsModal = ({ visible, postId, onClose }) => {
                   <Ionicons 
                     name={showEmojiPicker ? "keypad-outline" : "happy-outline"} 
                     size={24} 
-                    color={colors.text.light.primary} 
+                    color={theme.text.primary} 
                   />
                 </TouchableOpacity>
                 
                 <TextInput
                   ref={inputRef}
-                  style={styles.input}
+                  style={[styles.input, { 
+                    backgroundColor: theme.background.secondary, 
+                    borderColor: theme.background.tertiary,
+                    color: theme.text.primary 
+                  }]}
                   placeholder={replyingTo ? "Reply to comment..." : "Add a comment..."}
-                  placeholderTextColor={colors.text.light.secondary}
+                  placeholderTextColor={theme.text.secondary}
                   value={newComment}
                   onChangeText={setNewComment}
                   multiline
                   maxLength={500}
                   onFocus={() => setShowEmojiPicker(false)}
                 />
-                
-                <TouchableOpacity
+                <TouchableOpacity 
+                  style={styles.postButton}
                   onPress={handleSubmit}
                   disabled={!newComment.trim() || submitting}
-                  style={styles.postButton}
                 >
                   {submitting ? (
-                    <ActivityIndicator size="small" color={colors.primary.main} />
+                    <ActivityIndicator size="small" color={theme.primary.main} />
                   ) : (
                     <Text style={[
-                      styles.postButtonText,
-                      (!newComment.trim()) && styles.postButtonDisabled
+                      styles.postButtonText, 
+                      { color: theme.primary.main },
+                      (!newComment.trim() || submitting) && styles.postButtonDisabled
                     ]}>
                       Post
                     </Text>
@@ -274,7 +279,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   modalContainer: {
-    backgroundColor: '#fff',
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
     height: '90%', // Increased height
@@ -294,19 +298,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.sm,
     borderBottomWidth: 0.5,
-    borderBottomColor: colors.background.light.tertiary,
   },
   headerBar: {
     width: 40,
     height: 4,
-    backgroundColor: colors.background.light.tertiary,
     borderRadius: 2,
     marginBottom: spacing.sm,
   },
   headerTitle: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
   },
   content: {
     flex: 1,
@@ -327,12 +328,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
     marginTop: spacing.md,
   },
   emptySubtext: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     marginTop: spacing.xs,
   },
   replyingContainer: {
@@ -341,22 +340,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    backgroundColor: colors.background.light.secondary,
     borderTopWidth: 0.5,
-    borderTopColor: colors.background.light.tertiary,
   },
   replyingText: {
     fontSize: typography.sizes.xs,
-    color: colors.text.light.secondary,
   },
   replyingName: {
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
   },
   inputWrapper: {
-    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: colors.background.light.tertiary,
     paddingBottom: Platform.OS === 'ios' ? 20 : 0, // Safe area adjustment
   },
   inputContainer: {
@@ -373,14 +366,11 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
     maxHeight: 100,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    backgroundColor: colors.background.light.secondary,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.background.light.tertiary,
     marginRight: spacing.sm,
   },
   postButton: {
@@ -390,11 +380,9 @@ const styles = StyleSheet.create({
   postButtonText: {
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.bold,
-    color: colors.primary.main,
   },
   postButtonDisabled: {
     opacity: 0.5,
-    color: colors.primary.light,
   },
 });
 

@@ -23,7 +23,7 @@ import PostDetailsScreen from '../screens/PostDetailsScreen';
 // Context
 import { useAuth } from '../context/AuthContext';
 
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,7 +37,10 @@ const AuthStack = () => (
 );
 
 // Main Tab Navigator
-const MainTabs = () => (
+const MainTabs = () => {
+  const { theme } = useTheme();
+  
+  return (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
@@ -56,9 +59,10 @@ const MainTabs = () => (
 
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: colors.primary.main,
-      tabBarInactiveTintColor: colors.text.light.secondary,
+      tabBarActiveTintColor: theme.primary.main,
+      tabBarInactiveTintColor: theme.text.secondary,
       tabBarStyle: {
+        backgroundColor: theme.background.card,
         paddingBottom: 8,
         paddingTop: 8,
         height: 60,
@@ -80,7 +84,8 @@ const MainTabs = () => (
     <Tab.Screen name="Notifications" component={NotificationsScreen} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
-);
+  );
+};
 
 // Main Stack with Modals
 const MainStack = () => (

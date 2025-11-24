@@ -14,7 +14,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 
@@ -23,6 +23,7 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useAuth();
+  const { theme } = useTheme();
 
   const handleLogin = async () => {
     if (!email ||!password) {
@@ -38,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -46,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
         <View style={styles.content}>
           {/* Header */}
           <LinearGradient
-            colors={colors.primary.gradient}
+            colors={theme.primary.gradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.header}
@@ -59,12 +60,12 @@ const LoginScreen = ({ navigation }) => {
           {/* Form */}
           <View style={styles.form}>
             {/* Email Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="mail-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Email address"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -74,12 +75,12 @@ const LoginScreen = ({ navigation }) => {
             </View>
 
             {/* Password Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="lock-closed-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Password"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
@@ -89,7 +90,7 @@ const LoginScreen = ({ navigation }) => {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color={colors.text.light.secondary}
+                  color={theme.text.secondary}
                 />
               </TouchableOpacity>
             </View>
@@ -101,7 +102,7 @@ const LoginScreen = ({ navigation }) => {
               disabled={loading}
             >
               <LinearGradient
-                colors={colors.primary.gradient}
+                colors={theme.primary.gradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.loginButtonGradient}
@@ -116,9 +117,9 @@ const LoginScreen = ({ navigation }) => {
 
             {/* Register Link */}
             <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
+              <Text style={[styles.registerText, { color: theme.text.secondary }]}>Don't have an account? </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.registerLink}>Sign Up</Text>
+                <Text style={[styles.registerLink, { color: theme.primary.main }]}>Sign Up</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -131,7 +132,6 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   keyboardView: {
     flex: 1,
@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.md,
     marginBottom: spacing.md,
@@ -187,7 +186,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
   },
   loginButton: {
     marginTop: spacing.lg,
@@ -210,11 +208,9 @@ const styles = StyleSheet.create({
   },
   registerText: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   registerLink: {
     fontSize: typography.sizes.md,
-    color: colors.primary.main,
     fontWeight: typography.weights.semibold,
   },
 });

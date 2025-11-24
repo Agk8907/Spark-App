@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import { borderRadius } from '../theme/spacing';
 import { getImageUrl } from '../utils/image';
 
 const UserAvatar = ({ uri, size = 'medium', showOnline = false, isOnline = false }) => {
+  const { theme } = useTheme();
   const sizes = {
     small: 32,
     medium: 44,
@@ -19,7 +20,7 @@ const UserAvatar = ({ uri, size = 'medium', showOnline = false, isOnline = false
     <View style={[styles.container, { width: avatarSize, height: avatarSize }]}>
       <Image 
         source={{ uri: getImageUrl(uri) }} 
-        style={[styles.avatar, { width: avatarSize, height: avatarSize }]} 
+        style={[styles.avatar, { width: avatarSize, height: avatarSize, borderColor: theme.primary.light }]} 
       />
       {showOnline && isOnline && (
         <View style={[
@@ -28,6 +29,8 @@ const UserAvatar = ({ uri, size = 'medium', showOnline = false, isOnline = false
             width: avatarSize * 0.25, 
             height: avatarSize * 0.25,
             borderRadius: avatarSize * 0.125,
+            backgroundColor: theme.accent.green,
+            borderColor: theme.background.card
           }
         ]} />
       )}
@@ -42,15 +45,17 @@ const styles = StyleSheet.create({
   avatar: {
     borderRadius: borderRadius.full,
     borderWidth: 2,
-    borderColor: colors.primary.light,
+    borderRadius: borderRadius.full,
+    borderWidth: 2,
   },
   onlineIndicator: {
     position: 'absolute',
     bottom: 2,
     right: 2,
-    backgroundColor: colors.accent.green,
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
     borderWidth: 2,
-    borderColor: colors.background.light.card,
   },
 });
 

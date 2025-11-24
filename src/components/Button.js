@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius, shadows } from '../theme/spacing';
 
@@ -14,25 +14,27 @@ const Button = ({
   disabled = false,
   icon = null,
 }) => {
+  const { theme } = useTheme();
+
   const getColors = () => {
     switch (variant) {
       case 'primary':
-        return colors.primary.gradient;
+        return theme.primary.gradient;
       case 'secondary':
-        return colors.secondary.gradient;
+        return theme.secondary.gradient || theme.primary.gradient; // Fallback if secondary gradient not defined
       case 'ghost':
         return ['transparent', 'transparent'];
       default:
-        return colors.primary.gradient;
+        return theme.primary.gradient;
     }
   };
 
   const getTextColor = () => {
     switch (variant) {
       case 'ghost':
-        return colors.primary.main;
+        return theme.primary.main;
       default:
-        return colors.text.light.inverse;
+        return theme.text.inverse;
     }
   };
 

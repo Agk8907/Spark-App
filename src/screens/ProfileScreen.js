@@ -18,13 +18,14 @@ import { userAPI, postAPI } from '../services/api';
 import { usePosts } from '../context/PostsContext';
 import PostCard from '../components/PostCard';
 import CommentsModal from '../components/CommentsModal';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 import { getImageUrl } from '../utils/image';
 
 const ProfileScreen = ({ navigation }) => {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const { deletePost, likePost } = usePosts();
   const [userProfile, setUserProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
@@ -114,8 +115,8 @@ const ProfileScreen = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary.main} />
-          <Text style={styles.loadingText}>Loading profile...</Text>
+          <ActivityIndicator size="large" color={theme.primary.main} />
+          <Text style={[styles.loadingText, { color: theme.text.secondary }]}>Loading profile...</Text>
         </View>
       </SafeAreaView>
     );
@@ -124,7 +125,7 @@ const ProfileScreen = ({ navigation }) => {
   const profile = userProfile || user;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -133,7 +134,7 @@ const ProfileScreen = ({ navigation }) => {
       >
         {/* Header with Gradient */}
         <LinearGradient
-          colors={colors.primary.gradient}
+          colors={theme.primary.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
@@ -152,35 +153,35 @@ const ProfileScreen = ({ navigation }) => {
         </LinearGradient>
 
         {/* Profile Info */}
-        <View style={styles.profileInfo}>
-          <Text style={styles.name}>{profile.name}</Text>
-          <Text style={styles.username}>@{profile.username}</Text>
-          {profile.bio && <Text style={styles.bio}>{profile.bio}</Text>}
+        <View style={[styles.profileInfo, { backgroundColor: theme.background.card }]}>
+          <Text style={[styles.name, { color: theme.text.primary }]}>{profile.name}</Text>
+          <Text style={[styles.username, { color: theme.text.secondary }]}>@{profile.username}</Text>
+          {profile.bio && <Text style={[styles.bio, { color: theme.text.primary }]}>{profile.bio}</Text>}
 
           {/* Stats */}
           <View style={styles.stats}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{userPosts.length || 0}</Text>
-              <Text style={styles.statLabel}>Posts</Text>
+              <Text style={[styles.statNumber, { color: theme.text.primary }]}>{userPosts.length || 0}</Text>
+              <Text style={[styles.statLabel, { color: theme.text.secondary }]}>Posts</Text>
+            </View>
+            <View style={[styles.statDivider, { backgroundColor: theme.background.tertiary }]} />
+            <View style={styles.statItem}>
+              <Text style={[styles.statNumber, { color: theme.text.primary }]}>{profile.followersCount || 0}</Text>
+              <Text style={[styles.statLabel, { color: theme.text.secondary }]}>Followers</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{profile.followersCount || 0}</Text>
-              <Text style={styles.statLabel}>Followers</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{profile.followingCount || 0}</Text>
-              <Text style={styles.statLabel}>Following</Text>
+              <Text style={[styles.statNumber, { color: theme.text.primary }]}>{profile.followingCount || 0}</Text>
+              <Text style={[styles.statLabel, { color: theme.text.secondary }]}>Following</Text>
             </View>
           </View>
         </View>
 
         {/* Posts Section */}
-        <View style={styles.postsSection}>
+        <View style={[styles.postsSection, { backgroundColor: theme.background.card }]}>
           <View style={styles.postsSectionHeader}>
-            <Ionicons name="grid-outline" size={24} color={colors.primary.main} />
-            <Text style={styles.postsSectionTitle}>My Posts</Text>
+            <Ionicons name="grid-outline" size={24} color={theme.primary.main} />
+            <Text style={[styles.postsSectionTitle, { color: theme.text.primary }]}>My Posts</Text>
           </View>
 
           {userPosts.length > 0 ? (
@@ -198,9 +199,9 @@ const ProfileScreen = ({ navigation }) => {
             </View>
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="images-outline" size={64} color={colors.text.light.secondary} />
-              <Text style={styles.emptyStateText}>No posts yet</Text>
-              <Text style={styles.emptyStateSubtext}>
+              <Ionicons name="images-outline" size={64} color={theme.text.tertiary} />
+              <Text style={[styles.emptyStateText, { color: theme.text.secondary }]}>No posts yet</Text>
+              <Text style={[styles.emptyStateSubtext, { color: theme.text.tertiary }]}>
                 Share your first post and it will appear here
               </Text>
             </View>
@@ -220,7 +221,6 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -230,7 +230,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   header: {
     paddingTop: spacing.xl,
@@ -257,7 +256,6 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   profileInfo: {
-    backgroundColor: '#fff',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xl,
@@ -268,17 +266,14 @@ const styles = StyleSheet.create({
   name: {
     fontSize: typography.sizes.xxl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
     marginBottom: spacing.xs,
   },
   username: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
     marginBottom: spacing.md,
   },
   bio: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
     lineHeight: 22,
     marginBottom: spacing.lg,
   },
@@ -287,7 +282,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: colors.background.light.tertiary,
+    borderTopColor: 'transparent', // Handled dynamically
   },
   statItem: {
     alignItems: 'center',
@@ -295,19 +290,15 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: typography.sizes.xl,
     fontWeight: typography.weights.bold,
-    color: colors.text.light.primary,
   },
   statLabel: {
     fontSize: typography.sizes.sm,
-    color: colors.text.light.secondary,
     marginTop: spacing.xs,
   },
   statDivider: {
     width: 1,
-    backgroundColor: colors.background.light.tertiary,
   },
   postsSection: {
-    backgroundColor: '#fff',
     marginTop: spacing.md,
     padding: spacing.lg,
   },
@@ -320,7 +311,6 @@ const styles = StyleSheet.create({
   postsSectionTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.primary,
   },
   emptyState: {
     alignItems: 'center',
@@ -329,12 +319,10 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
-    color: colors.text.light.secondary,
     marginTop: spacing.md,
   },
   emptyStateSubtext: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.tertiary,
     marginTop: spacing.xs,
   },
 });

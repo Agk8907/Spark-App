@@ -15,7 +15,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
-import colors from '../theme/colors';
+import { useTheme } from '../context/ThemeContext';
 import typography from '../theme/typography';
 import { spacing, borderRadius } from '../theme/spacing';
 
@@ -30,6 +30,7 @@ const RegisterScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState('');
   const { register, loading } = useAuth();
+  const { theme } = useTheme();
 
   console.log('🎨 RegisterScreen Rendered. Loading:', loading);
 
@@ -74,7 +75,7 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background.secondary }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -82,7 +83,7 @@ const RegisterScreen = ({ navigation }) => {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Header */}
           <LinearGradient
-            colors={colors.primary.gradient}
+            colors={theme.primary.gradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.header}
@@ -102,12 +103,12 @@ const RegisterScreen = ({ navigation }) => {
             ) : null}
 
             {/* Username Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="at-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="at-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Username"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={formData.username}
                 onChangeText={(value) => updateFormData('username', value)}
                 autoCapitalize="none"
@@ -115,24 +116,24 @@ const RegisterScreen = ({ navigation }) => {
             </View>
 
             {/* Name Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="person-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Full Name"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={formData.name}
                 onChangeText={(value) => updateFormData('name', value)}
               />
             </View>
 
             {/* Email Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="mail-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Email address"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={formData.email}
                 onChangeText={(value) => updateFormData('email', value)}
                 keyboardType="email-address"
@@ -142,12 +143,12 @@ const RegisterScreen = ({ navigation }) => {
             </View>
 
             {/* Password Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="lock-closed-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Password"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={formData.password}
                 onChangeText={(value) => updateFormData('password', value)}
                 secureTextEntry={!showPassword}
@@ -157,18 +158,18 @@ const RegisterScreen = ({ navigation }) => {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color={colors.text.light.secondary}
+                  color={theme.text.secondary}
                 />
               </TouchableOpacity>
             </View>
 
             {/* Confirm Password Input */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.text.light.secondary} style={styles.inputIcon} />
+            <View style={[styles.inputContainer, { backgroundColor: theme.background.card }]}>
+              <Ionicons name="lock-closed-outline" size={20} color={theme.text.secondary} style={styles.inputIcon} />
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: theme.text.primary }]}
                 placeholder="Confirm Password"
-                placeholderTextColor={colors.text.light.secondary}
+                placeholderTextColor={theme.text.tertiary}
                 value={formData.confirmPassword}
                 onChangeText={(value) => updateFormData('confirmPassword', value)}
                 secureTextEntry={!showPassword}
@@ -183,7 +184,7 @@ const RegisterScreen = ({ navigation }) => {
               disabled={loading}
             >
               <LinearGradient
-                colors={colors.primary.gradient}
+                colors={theme.primary.gradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.registerButtonGradient}
@@ -198,9 +199,9 @@ const RegisterScreen = ({ navigation }) => {
 
             {/* Login Link */}
             <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>Already have an account? </Text>
+              <Text style={[styles.loginText, { color: theme.text.secondary }]}>Already have an account? </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.loginLink}>Login</Text>
+                <Text style={[styles.loginLink, { color: theme.primary.main }]}>Login</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -213,7 +214,6 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.light.secondary,
   },
   keyboardView: {
     flex: 1,
@@ -247,7 +247,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.md,
     marginBottom: spacing.md,
@@ -270,7 +269,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: spacing.md,
     fontSize: typography.sizes.md,
-    color: colors.text.light.primary,
   },
   registerButton: {
     marginTop: spacing.lg,
@@ -293,11 +291,9 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: typography.sizes.md,
-    color: colors.text.light.secondary,
   },
   loginLink: {
     fontSize: typography.sizes.md,
-    color: colors.primary.main,
     fontWeight: typography.weights.semibold,
   },
 });
