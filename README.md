@@ -129,39 +129,6 @@ Spark/
 └── App.js                 # Main app entry
 ```
 
-## 🔌 API Endpoints
-
-### Authentication
-
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user
-
-### Users
-
-- `GET /api/users/:id` - Get user profile
-- `PUT /api/users/:id` - Update profile (protected)
-- `POST /api/users/:id/follow` - Follow/unfollow user
-- `GET /api/users/search` - Search users
-
-### Posts
-
-- `GET /api/posts` - Get feed posts
-- `POST /api/posts` - Create post (protected)
-- `DELETE /api/posts/:id` - Delete post (protected)
-- `POST /api/posts/:id/like` - Like/unlike post
-- `POST /api/posts/:id/share` - Share post
-
-### Comments
-
-- `GET /api/comments/:postId` - Get post comments
-- `POST /api/comments/:postId` - Create comment (protected)
-- `DELETE /api/comments/:id` - Delete comment (protected)
-
-### Notifications
-
-- `GET /api/notifications` - Get notifications (protected)
-- `PUT /api/notifications/:id/read` - Mark as read
 
 ## 🎨 Tech Stack
 
@@ -214,10 +181,5 @@ The app features:
 - Build with Expo EAS for iOS/Android
 - Or use Expo Go for development testing
 
-## 📝 License
-
-This project is for educational and demonstration purposes.
-
----
 
 **Built with ❤️ using React Native, Node.js, and Cloudinary**
